@@ -9,6 +9,11 @@ help ()
   echo "  -c, --copy          Copies instead of move the files to the output directory"
   echo "  -m, --move          Moves instead of copy the files to the output directory. This is the default option"
   echo "  -v, --verbose       Show verbosity"
+  echo ""
+  echo "The files should be named as follows:"
+  echo "  [<whatever> - artist.extension] or [<whatever> - artist, artist, artist.extension]"
+  echo "example:"
+  echo "  <My Song - Year - More Data - Artist.m4a> <My Song - Me.mp3> <Someone's Song - Someone, Me.mp3>"
   exit 0
 }
 
