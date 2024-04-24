@@ -46,22 +46,24 @@ fi
 
 for file in "$src_dir"/*; do
   if [ -f "$file" ]; then
-    if [[ ! $(file --mime-type "$file" | grep -q "audio") && ! $(file --mime-type "$file" | grep -q "audio") ]]; then
+    if [[ ! $(file --mime-type "$file" | grep -q "audio") && ! $(file --mime-type "$file" | grep -q "video") ]]; then
+      echo "not audio"
       continue
     fi
 
     artist=$(echo "$file" | awk -F " - " '{print $NF}' | cut -d "." -f1 | cut -d "," -f1 | awk '{gsub(/^ +| +$/,"")} {print $0}')
+    name=$(basename "$file")
     if [ ! -e "$dst_dir/$artist" ]; then
       mkdir -p "$dst_dir/$artist"
     fi
 
-    if [[ -e "$dst_dir/$artist/$(basename $file)" && ! $force ]]; then
+    if [[ -e "$dst_dir/$artist/$name" && ! $force ]]; then
       if [[ $verbose ]]; then
-        echo "$(basename $file) alredy in $dst_dir/$artist"
+        echo "$name alredy in $dst_dir/$artist"
       fi
     else
       if [ verbose ]; then
-        echo "moving $(basename $file) to $dst_dir/$artist..."
+        echo "moving $name to $dst_dir/$artist..."
       fi
 
       if [[ $copy ]]; then
