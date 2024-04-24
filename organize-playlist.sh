@@ -61,7 +61,7 @@ for file in "$src_dir"/*; do
         echo "$name alredy in $dst_dir/$artist"
       fi
     else
-      if [ verbose ]; then
+      if [ $verbose ]; then
         echo "moving $name to $dst_dir/$artist..."
       fi
 
