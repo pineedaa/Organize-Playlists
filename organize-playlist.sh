@@ -1,8 +1,23 @@
 #!/bin/sh
 
+help ()
+{
+  echo "How to use:"
+  echo "  -o, --output        The output directory for storing the ordered playlist"
+  echo "  -s, --source        The directory with all your music"
+  echo "  -f, --force         Wheter to rewrite files or not if they alredy are in the output directory"
+  echo "  -c, --copy          Copies instead of move the files to the output directory"
+  echo "  -m, --move          Moves instead of copy the files to the output directory. This is the default option"
+  echo "  -v, --verbose       Show verbosity"
+  exit 0
+}
+
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
+        -h|--help)
+            help
+            ;;
         -v|--verbose)
             verbose=true
             ;;
