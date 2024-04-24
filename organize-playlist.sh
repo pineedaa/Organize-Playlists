@@ -47,7 +47,6 @@ fi
 for file in "$src_dir"/*; do
   if [ -f "$file" ]; then
     if [[ $(file --mime-type "$file" | grep -q "audio") && $(file --mime-type "$file" | grep -q "video") ]]; then
-      echo "not audio"
       continue
     fi
 
