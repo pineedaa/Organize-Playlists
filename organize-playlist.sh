@@ -7,9 +7,9 @@ help ()
   echo "  -s, --source        The directory with all your music"
   echo "  -f, --force         Wheter to rewrite files or not if they alredy are in the output directory"
   echo "  -c, --copy          Copies instead of move the files to the output directory"
-  echo "  -l, --link          Makes a simbolic link instead of copy the files to the output directory"
+  echo "  -l, --link          Makes a simbolic link instead of copy the files to the output directory. This is the default option"
   echo "  -h, --hard          Makes a hard link instead of copy the files to the output directory"
-  echo "  -m, --move          Moves instead of copy the files to the output directory. This is the default option"
+  echo "  -m, --move          Moves instead of copy the files to the output directory"
   echo "  -v, --verbose       Show verbosity"
   echo ""
   echo "The files should be named as follows:"
@@ -108,7 +108,12 @@ for file in "$src_dir"/*; do
         continue
       fi
 
-      mv "$file" "$dst_dir/$artist"
+      if [[ $move ]]; then
+        mv "$file" "$dst_dir/$artist"
+        continue
+      fi
+
+      ln -s "$file" "$dst_dir/$artist"
     fi
   fi
 done
