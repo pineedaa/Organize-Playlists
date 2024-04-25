@@ -19,6 +19,7 @@ help ()
   exit 0
 }
 
+count=0
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
@@ -30,15 +31,19 @@ while [[ $# -gt 0 ]]; do
             ;;
         -m|--move)
             move=true
+            ((count++))
             ;;
         -h|--hard)
             hard=true
+            ((count++))
             ;;
         -l|--link)
             link=true
+            ((count++))
             ;;
         -c|--copy)
             copy=true
+            ((count++))
             ;;
         -f|--force)
             force=true
@@ -72,6 +77,11 @@ if [[ ! -e "$src_dir" || ! -e "$dst_dir" ]]; then
   exit 1
 fi
 
+if [[ $count -gt 1  ]];then
+  echo "You must specify only one method of organize your files (-l/--link, -h/--hard, -c/--copy, -m/--move)" >&2
+  exit 1
+fi
+
 for file in "$src_dir"/*; do
   if [ -f "$file" ]; then
     if [[ $(file --mime-type "$file" | grep -q "audio") && $(file --mime-type "$file" | grep -q "video") ]]; then
@@ -95,11 +105,6 @@ for file in "$src_dir"/*; do
 
       if [[ $copy ]]; then
         cp "$file" "$dst_dir/$artist"
-        continue
-      fi
-
-      if [[ $link ]]; then
-        ln -s "$file" "$dst_dir/$artist"
         continue
       fi
 
