@@ -7,6 +7,8 @@ help ()
   echo "  -s, --source        The directory with all your music"
   echo "  -f, --force         Wheter to rewrite files or not if they alredy are in the output directory"
   echo "  -c, --copy          Copies instead of move the files to the output directory"
+  echo "  -l, --link          Makes a simbolic link instead of copy the files to the output directory"
+  echo "  -h, --hard          Makes a hard link instead of copy the files to the output directory"
   echo "  -m, --move          Moves instead of copy the files to the output directory. This is the default option"
   echo "  -v, --verbose       Show verbosity"
   echo ""
@@ -28,6 +30,12 @@ while [[ $# -gt 0 ]]; do
             ;;
         -m|--move)
             move=true
+            ;;
+        -h|--hard)
+            hard=true
+            ;;
+        -l|--link)
+            link=true
             ;;
         -c|--copy)
             copy=true
@@ -87,6 +95,16 @@ for file in "$src_dir"/*; do
 
       if [[ $copy ]]; then
         cp "$file" "$dst_dir/$artist"
+        continue
+      fi
+
+      if [[ $link ]]; then
+        ln -s "$file" "$dst_dir/$artist"
+        continue
+      fi
+
+      if [[ $hard ]]; then
+        ln "$file" "$dst_dir/$artist"
         continue
       fi
 
