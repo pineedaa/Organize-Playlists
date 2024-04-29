@@ -82,6 +82,8 @@ if [[ $count -gt 1  ]];then
   exit 1
 fi
 
+moved=0
+stayed=0
 for file in "$src_dir"/*; do
   if [ -f "$file" ]; then
     if [[ $(file --mime-type "$file" | grep -q "audio") && $(file --mime-type "$file" | grep -q "video") ]]; then
@@ -95,10 +97,9 @@ for file in "$src_dir"/*; do
     fi
 
     if [[ (-e "$dst_dir/$artist/$name" || -L "$dst_dir/$artist/$name") && $force -ne 1 ]]; then
-      if [[ $verbose ]]; then
-        echo "$name alredy in $dst_dir/$artist"
-      fi
+      ((stayed++))
     else
+      ((moved++))
       if [[ $verbose -eq 1 ]]; then
         echo "moving $name to $dst_dir/$artist..."
       fi
@@ -122,3 +123,5 @@ for file in "$src_dir"/*; do
     fi
   fi
 done
+
+echo "Moved files: $moved. Files alredy in $dst_dir: $stayed"
