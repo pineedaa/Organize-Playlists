@@ -8,7 +8,7 @@ help ()
   echo "  -f, --force         Wheter to rewrite files or not if they alredy are in the output directory"
   echo "  -c, --copy          Copies instead of move the files to the output directory"
   echo "  -l, --link          Makes a simbolic link instead of copy the files to the output directory. This is the default option"
-  echo "  -h, --hard          Makes a hard link instead of copy the files to the output directory"
+  echo "  -hl, --hard         Makes a hard link instead of copy the files to the output directory"
   echo "  -m, --move          Moves instead of copy the files to the output directory"
   echo "  -v, --verbose       Show verbosity"
   echo ""
@@ -27,26 +27,26 @@ while [[ $# -gt 0 ]]; do
             help
             ;;
         -v|--verbose)
-            verbose=true
+            verbose=1
             ;;
         -m|--move)
-            move=true
+            move=1
             ((count++))
             ;;
-        -h|--hard)
-            hard=true
+        -hl|--hard)
+            hard=1
             ((count++))
             ;;
         -l|--link)
-            link=true
+            link=1
             ((count++))
             ;;
         -c|--copy)
-            copy=true
+            copy=1
             ((count++))
             ;;
         -f|--force)
-            force=true
+            force=1
             ;;
         -o|--output)
             dst_dir=$(realpath -m "$2")
@@ -94,26 +94,26 @@ for file in "$src_dir"/*; do
       mkdir -p "$dst_dir/$artist"
     fi
 
-    if [[ -e "$dst_dir/$artist/$name" && ! $force ]]; then
+    if [[ (-e "$dst_dir/$artist/$name" || -L "$dst_dir/$artist/$name") && $force -ne 1 ]]; then
       if [[ $verbose ]]; then
         echo "$name alredy in $dst_dir/$artist"
       fi
     else
-      if [ $verbose ]; then
+      if [[ $verbose -eq 1 ]]; then
         echo "moving $name to $dst_dir/$artist..."
       fi
 
-      if [[ $copy ]]; then
+      if [[ $copy -eq 1 ]]; then
         cp "$file" "$dst_dir/$artist"
         continue
       fi
 
-      if [[ $hard ]]; then
+      if [[ $hard -eq 1 ]]; then
         ln "$file" "$dst_dir/$artist"
         continue
       fi
 
-      if [[ $move ]]; then
+      if [[ $move -eq 1 ]]; then
         mv "$file" "$dst_dir/$artist"
         continue
       fi
