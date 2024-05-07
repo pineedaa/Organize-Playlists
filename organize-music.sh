@@ -19,6 +19,18 @@ help ()
   exit 0
 }
 
+get_title() {
+  exiftool -m "$1" | grep -E "^Title\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+}
+
+get_artist() {
+  exiftool -m "$1" | grep -E "^Artist\s*:" | cut -d ":" -f2 | cut -d "," -f1 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+}
+
+get_album() {
+  exiftool -m "$1" | grep -E "^Album\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+}
+
 count=0
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -90,36 +102,42 @@ for file in "$src_dir"/*; do
       continue
     fi
 
-    artist=$(echo "$file" | awk -F " - " '{print $NF}' | cut -d "." -f1 | cut -d "," -f1 | awk '{gsub(/^ +| +$/,"")} {print $0}')
-    name=$(basename "$file")
-    if [ ! -e "$dst_dir/$artist" ]; then
-      mkdir -p "$dst_dir/$artist"
+    artist="$(get_artist "$file")"
+    artist="${artist//\//_}"
+    album="$(get_album "$file")"
+    album="${album//\//_}"
+    name="$(get_title "$file")"
+    name="${name//\//_}"
+    extension=$(echo "$(basename "$file")" | awk -F. '{print $NF}')
+    song="$name - $album - $artist.$extension"
+    if [ ! -e "$dst_dir/$artist/$album" ]; then
+      mkdir -p "$dst_dir/$artist/$album"
     fi
 
-    if [[ (-e "$dst_dir/$artist/$name" || -L "$dst_dir/$artist/$name") && $force -ne 1 ]]; then
+    if [[ (-e "$dst_dir/$artist/$album/$name" || -L "$dst_dir/$artist/$album/$name") && $force -ne 1 ]]; then
       ((stayed++))
     else
       ((moved++))
       if [[ $verbose -eq 1 ]]; then
-        echo "moving $name to $dst_dir/$artist..."
+        echo "moving $name to $dst_dir/$artist/$album..."
       fi
 
       if [[ $copy -eq 1 ]]; then
-        cp "$file" "$dst_dir/$artist"
+        cp "$file" "$dst_dir/$artist/$album/$song"
         continue
       fi
 
       if [[ $hard -eq 1 ]]; then
-        ln "$file" "$dst_dir/$artist"
+        ln "$file" "$dst_dir/$artist/$album/$song"
         continue
       fi
 
       if [[ $move -eq 1 ]]; then
-        mv "$file" "$dst_dir/$artist"
+        mv "$file" "$dst_dir/$artist/$album/$song"
         continue
       fi
 
-      ln -s "$file" "$dst_dir/$artist"
+      ln -s "$file" "$dst_dir/$artist/$album/$song"
     fi
   fi
 done
