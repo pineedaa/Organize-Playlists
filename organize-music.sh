@@ -27,6 +27,10 @@ get_artist() {
   exiftool -m "$1" | grep -E "^Artist\s*:" | cut -d ":" -f2 | cut -d "," -f1 | awk '{gsub(/^ +| +$/,"")} {print $0}'
 }
 
+get_all_artists() {
+  exiftool -m "$1" | grep -E "^Artist\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+}
+
 get_album() {
   exiftool -m "$1" | grep -E "^Album\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
 }
@@ -108,8 +112,10 @@ for file in "$src_dir"/*; do
     album="${album//\//_}"
     name="$(get_title "$file")"
     name="${name//\//_}"
+    all_artists="$(get_all_artists "$file")"
+    all_artists="${all_artists//\//_}"
     extension=$(echo "$(basename "$file")" | awk -F. '{print $NF}')
-    song="$name - $album - $artist.$extension"
+    song="$name - $all_artists - $album.$extension"
     if [ ! -e "$dst_dir/$artist/$album" ]; then
       mkdir -p "$dst_dir/$artist/$album"
     fi
