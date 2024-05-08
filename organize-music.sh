@@ -144,7 +144,7 @@ for file in "$src_dir"/*; do
       mkdir -p "$dst_dir/$artist/$album"
     fi
 
-    if [[ (-e "$dst_dir/$artist/$album/$name" || -L "$dst_dir/$artist/$album/$name") && $force -ne 1 ]]; then
+    if [[ (-e "$dst_dir/$artist/$album/$song" || -L "$dst_dir/$artist/$album/$song") && $force -ne 1 ]]; then
       ((stayed++))
     else
       ((moved++))
