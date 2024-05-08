@@ -20,19 +20,43 @@ help ()
 }
 
 get_title() {
-  exiftool -m "$1" | grep -E "^Title\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+  title=$(exiftool -m "$1" | grep -E "^Title\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}')
+  
+  if [[ -z "${title// }" ]]; then
+      echo "Unknown Song"
+  else
+      echo "${title}"
+  fi
 }
 
 get_artist() {
-  exiftool -m "$1" | grep -E "^Artist\s*:" | cut -d ":" -f2 | cut -d "," -f1 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+  artist=$(exiftool -m "$1" | grep -E "^Album Artist\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}')
+
+  if [[ -z "${artist// }" ]]; then
+      echo "Unknown Artist"
+  else
+      echo "${artist}"
+  fi
 }
 
 get_all_artists() {
-  exiftool -m "$1" | grep -E "^Artist\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+  artists=$(exiftool -m "$1" | grep -E "^Artist\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}')
+
+  if [[ -z "${artists// }" ]]; then
+      echo "Unknown Artist"
+  else
+      echo "${artists}"
+  fi
 }
 
 get_album() {
-  exiftool -m "$1" | grep -E "^Album\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}'
+  album=$(exiftool -m "$1" | grep -E "^Album\s*:" | cut -d ":" -f2 | awk '{gsub(/^ +| +$/,"")} {print $0}')
+
+  if [[ -z "${album// }" ]]; then
+      echo "Unknown Album"
+  else
+      echo "${album}"
+  fi
 }
 
 count=0
